@@ -1,0 +1,65 @@
+@import "tailwindcss";
+@import "@fontsource-variable/space-grotesk";
+@import "@fontsource-variable/dm-sans";
+
+@theme {
+  --color-background: #f5f5f1;
+  --color-ink: #1b2722;
+  --color-primary: #1c4435;
+  --color-lime: #d7ec7b;
+  --color-paper: #fbfcf8;
+  --color-border: #dfe4dc;
+  --color-muted: #526058;
+  --color-coral: #c84d32;
+  --color-soft-green: #e5efd8;
+  --color-soft-green-light: #d9e9c9;
+
+  --font-heading: 'Space Grotesk Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-sans: 'DM Sans Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+:root {
+  font-family: var(--font-sans);
+  color: #1b2722;
+  background-color: #f5f5f1;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  letter-spacing: -0.025em;
+  font-weight: 500;
+}
+
+/* Custom scrollbars and calm styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f5f5f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #dfe4dc;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #718078;
+}
+
+/* Accessible visible focus indicators */
+:focus-visible {
+  outline: 2px solid #1c4435;
+  outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

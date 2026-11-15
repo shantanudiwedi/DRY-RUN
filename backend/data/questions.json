@@ -1,0 +1,701 @@
+[
+  {
+    "id": "arr-con-01",
+    "topic": "Arrays",
+    "difficulty": "Foundations",
+    "type": "concept",
+    "prompt": "How does a dynamic array (like Python's list or C++ std::vector) achieve amortized O(1) insertion time when appending elements?",
+    "follow_up": "What happens to time complexity and memory when the array doubles its capacity? Why not grow by a constant addition of elements instead?",
+    "tags": ["arrays", "amortized-analysis", "memory"],
+    "reference_answer": "A dynamic array allocates a contiguous block of memory with a specific capacity. When elements are appended within this capacity, insertion is O(1). When full, it allocates a new block (typically 1.5x or 2x the current capacity), copies all existing elements over, and frees the old block. Although this resize takes O(N) time, doubling means resizes happen exponentially less frequently. Summing the resize costs over N insertions yields a total cost bounded by O(2N) = O(N), giving an amortized time of O(1) per append. Constant growth would cause O(N^2) total time for N appends."
+  },
+  {
+    "id": "arr-con-02",
+    "topic": "Arrays",
+    "difficulty": "Foundations",
+    "type": "concept",
+    "prompt": "Explain the Two Pointer technique. In what kinds of array problems is it preferred over nested loops?",
+    "follow_up": "Does the array always need to be sorted to use two pointers? Can you give an example where sorting is not required?",
+    "tags": ["arrays", "two-pointers", "optimization"],
+    "reference_answer": "The Two Pointer technique uses two index variables moving through the array simultaneously—either towards each other from opposite ends, or in the same direction (slow and fast pointers). It reduces time complexity from O(N^2) to O(N) by eliminating redundant comparisons. While sorted arrays naturally suit opposite-end pointers (like Two Sum II or Container With Most Water), sorting is not always required: for instance, slow/fast pointers in Dutch National Flag or in-place removal of elements work on unsorted arrays."
+  },
+  {
+    "id": "arr-con-03",
+    "topic": "Arrays",
+    "difficulty": "Intermediate",
+    "type": "concept",
+    "prompt": "Explain Kadane's Algorithm for finding the maximum subarray sum. What is its core recurrence relation and why does it work in O(N)?",
+    "follow_up": "How would you modify Kadane's algorithm if you also need to return the starting and ending indices of the maximum subarray?",
+    "tags": ["arrays", "dynamic-programming", "kadane"],
+    "reference_answer": "Kadane's algorithm maintains the maximum subarray sum ending at the current index: current_max = max(arr[i], current_max + arr[i]). At each step, we decide whether to add the current element to the existing contiguous subarray or start a fresh subarray at arr[i]. Global maximum is updated as max(global_max, current_max). Because each element is processed exactly once with O(1) state transitions, it runs in O(N) time and O(1) space. To track indices, maintain start, end, and a tentative start pointer that resets whenever arr[i] > current_max + arr[i]."
+  },
+  {
+    "id": "arr-con-04",
+    "topic": "Arrays",
+    "difficulty": "Intermediate",
+    "type": "concept",
+    "prompt": "Describe the Sliding Window technique. How do you distinguish between fixed-size and dynamic-size sliding windows?",
+    "follow_up": "What is the time complexity when the inner loop expands and shrinks the window, and why is it not O(N^2)?",
+    "tags": ["arrays", "sliding-window", "complexity"],
+    "reference_answer": "Sliding Window maintains a contiguous subsegment [left, right] of an array. In a fixed-size window, the window length k remains constant while both pointers increment together. In a dynamic-size window, the right pointer expands the window to satisfy a condition, and the left pointer contracts it when constraints are violated or to optimize the metric. Even though there is a nested while loop for contracting, each pointer (left and right) increments at most N times across the entire algorithm, bounding total pointer steps to 2N and runtime to O(N)."
+  },
+  {
+    "id": "arr-con-05",
+    "topic": "Arrays",
+    "difficulty": "Advanced",
+    "type": "concept",
+    "prompt": "How does a Monotonic Queue or Deque optimize sliding window minimum/maximum queries to O(N) total time?",
+    "follow_up": "What elements are evicted from the back of the deque versus the front of the deque during window advancement?",
+    "tags": ["arrays", "monotonic-queue", "deque", "advanced"],
+    "reference_answer": "A Monotonic Deque maintains indices of elements in strictly decreasing (or increasing) order of value within the current window. When processing a new element at index i, elements at the back of the deque that are smaller than or equal to arr[i] are evicted because they can never be the maximum in any subsequent window containing arr[i]. Then index i is appended to the back. From the front of the deque, indices falling outside the window boundary (index <= i - k) are popped. The front always holds the index of the maximum element. Each index is pushed and popped at most once, achieving O(N) overall."
+  },
+  {
+    "id": "arr-con-06",
+    "topic": "Arrays",
+    "difficulty": "Advanced",
+    "type": "concept",
+    "prompt": "Explain the Dutch National Flag algorithm for 3-way partitioning. What invariants are maintained by the three pointers?",
+    "follow_up": "How does this algorithm extend to Quicksort 3-way partitioning when there are many duplicate keys?",
+    "tags": ["arrays", "partitioning", "dutch-flag"],
+    "reference_answer": "Dijkstra's Dutch National Flag algorithm partitions an array containing three categories (e.g. 0, 1, 2) in O(N) time and O(1) space. Three pointers are maintained: low, mid, and high. The invariants are: [0 .. low-1] contains 0s, [low .. mid-1] contains 1s, [mid .. high] are unexamined, and [high+1 .. N-1] contains 2s. If arr[mid] == 0, swap(arr[low], arr[mid]) and increment both low and mid. If arr[mid] == 1, increment mid. If arr[mid] == 2, swap(arr[mid], arr[high]) and decrement high without incrementing mid. In Quicksort, this partitions elements into < pivot, == pivot, and > pivot, reducing runtime on arrays with duplicate keys to O(N)."
+  },
+  {
+    "id": "arr-cod-01",
+    "topic": "Arrays",
+    "difficulty": "Foundations",
+    "type": "coding",
+    "prompt": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume each input has exactly one solution, and you may not use the same element twice.",
+    "follow_up": "Can you solve it in a single pass with O(N) time complexity? What happens if duplicate numbers exist?",
+    "tags": ["arrays", "hash-table", "two-sum"],
+    "reference_answer": "Use a hash map mapping each seen number to its index. Traverse nums once: for element x, compute complement = target - x. If complement is in the map, return [map[complement], current_index]. Otherwise, insert x into the map. Time complexity is O(N) average, space is O(N).",
+    "examples": [
+      {
+        "input": "nums = [2, 7, 11, 15], target = 9",
+        "output": "[0, 1]",
+        "explanation": "Because nums[0] + nums[1] == 9, we return [0, 1]."
+      }
+    ],
+    "constraints": ["2 <= nums.length <= 10^4", "-10^9 <= nums[i] <= 10^9", "Exactly one valid answer exists."]
+  },
+  {
+    "id": "arr-cod-02",
+    "topic": "Arrays",
+    "difficulty": "Intermediate",
+    "type": "coding",
+    "prompt": "Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0. The solution set must not contain duplicate triplets.",
+    "follow_up": "How do you ensure no duplicate triplets are included in your output without using a hash set?",
+    "tags": ["arrays", "two-pointers", "sorting", "three-sum"],
+    "reference_answer": "Sort the array in O(N log N). Iterate i from 0 to N-3. Skip duplicates if nums[i] == nums[i-1]. For each i, set low = i + 1 and high = N - 1. While low < high: check sum = nums[i] + nums[low] + nums[high]. If sum == 0, record triplet and advance low and high while skipping identical adjacent values. If sum < 0, low++; if sum > 0, high--. Total time is O(N^2), space is O(1) auxiliary.",
+    "examples": [
+      {
+        "input": "nums = [-1, 0, 1, 2, -1, -4]",
+        "output": "[[-1, -1, 2], [-1, 0, 1]]",
+        "explanation": "Distinct triplets adding to zero are [-1, -1, 2] and [-1, 0, 1]."
+      }
+    ],
+    "constraints": ["3 <= nums.length <= 3000", "-10^5 <= nums[i] <= 10^5"]
+  },
+  {
+    "id": "arr-cod-03",
+    "topic": "Arrays",
+    "difficulty": "Advanced",
+    "type": "coding",
+    "prompt": "Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.",
+    "follow_up": "Explain how the two-pointer approach achieves O(N) time and O(1) space compared to the O(N) auxiliary space prefix-max approach.",
+    "tags": ["arrays", "two-pointers", "trapping-rain-water"],
+    "reference_answer": "Water trapped above bar i is bounded by min(max_left, max_right) - height[i]. Using two pointers left = 0, right = N - 1, and tracking left_max and right_max: if height[left] < height[right], water trapped at left is determined strictly by left_max because we know right_max >= height[right] > height[left]. If left_max > height[left], add left_max - height[left], else update left_max; increment left. Symmetrically handle right. Runs in O(N) time and O(1) extra space.",
+    "examples": [
+      {
+        "input": "height = [0,1,0,2,1,0,1,3,2,1,2,1]",
+        "output": "6",
+        "explanation": "6 units of rain water are trapped between bars."
+      }
+    ],
+    "constraints": ["1 <= height.length <= 2 * 10^4", "0 <= height[i] <= 10^5"]
+  },
+
+  {
+    "id": "str-con-01",
+    "topic": "Strings",
+    "difficulty": "Foundations",
+    "type": "concept",
+    "prompt": "Why is string concatenation inside a loop an anti-pattern in languages like Java or Python, and how does StringBuilder or list join solve this?",
+    "follow_up": "What is the overall time complexity of concatenating N characters one by one with immutable strings versus with a dynamic buffer?",
+    "tags": ["strings", "immutability", "memory"],
+    "reference_answer": "In languages with immutable strings, string concatenation creates a new string object each time, copying all previous characters. In a loop of N iterations, the copies total 1 + 2 + ... + N = O(N^2) operations. A mutable buffer like StringBuilder in Java or appending to a list and calling ''.join() in Python reuses allocated capacity and resizes exponentially, yielding amortized O(1) appends and O(N) total runtime."
+  },
+  {
+    "id": "str-con-02",
+    "topic": "Strings",
+    "difficulty": "Foundations",
+    "type": "concept",
+    "prompt": "Explain how to determine whether two strings are valid anagrams. What data structures give the optimal time and space complexity?",
+    "follow_up": "What if the input contains Unicode characters instead of standard ASCII?",
+    "tags": ["strings", "anagram", "hash-map"],
+    "reference_answer": "Two strings are anagrams if they contain identical characters with identical frequencies. First check lengths; if unequal, return false. For ASCII/lowercase characters, an integer array of size 26 or 256 counts frequencies: increment for string s, decrement for string t. If all counts are zero, they are anagrams. Time complexity is O(N), auxiliary space is O(1) (fixed size 26). For Unicode, use a hash map with character keys; time remains O(N), space is O(K) where K is unique character count."
+  },
+  {
+    "id": "str-con-03",
+    "topic": "Strings",
+    "difficulty": "Intermediate",
+    "type": "concept",
+    "prompt": "How does the Sliding Window technique solve the 'Longest Substring Without Repeating Characters' problem in O(N) time?",
+    "follow_up": "Can you jump the left pointer directly instead of incrementing it one by one when a duplicate is found?",
+    "tags": ["strings", "sliding-window", "hash-map"],
+    "reference_answer": "Maintain a window [left, right] and a hash map storing the most recent index of each character. As the right pointer advances, if s[right] was seen at index j >= left, update left = j + 1. Then record the new position of s[right] = right, and update max_len = max(max_len, right - left + 1). Jumping left directly to j + 1 avoids incremental contraction, scanning the string in exactly N steps: O(N) time and O(min(N, Alphabet_Size)) space."
+  },
+  {
+    "id": "str-con-04",
+    "topic": "Strings",
+    "difficulty": "Intermediate",
+    "type": "concept",
+    "prompt": "Explain the Expand Around Center approach for finding the Longest Palindromic Substring. Why are there 2N - 1 centers?",
+    "follow_up": "How does this compare to dynamic programming in terms of space complexity?",
+    "tags": ["strings", "palindrome", "two-pointers"],
+    "reference_answer": "A palindrome mirrors around its center. A string of length N has 2N - 1 possible centers: N single-character centers for odd-length palindromes and N - 1 pairs of adjacent characters for even-length palindromes. For each center, expand outward with two pointers while characters match. This takes O(N^2) time in the worst case and O(1) auxiliary space, which beats the O(N^2) space required by standard DP table approaches."
+  },
+  {
+    "id": "str-con-05",
+    "topic": "Strings",
+    "difficulty": "Advanced",
+    "type": "concept",
+    "prompt": "Explain the prefix function (pi table) in the Knuth-Morris-Pratt (KMP) string matching algorithm.",
+    "follow_up": "Why does KMP achieve O(N + M) search time without backtracking the text pointer?",
+    "tags": ["strings", "kmp", "pattern-matching", "advanced"],
+    "reference_answer": "The KMP prefix function pi[i] computes the length of the longest proper prefix of pattern[0..i] that is also a suffix of pattern[0..i]. During pattern matching against text, when a mismatch occurs after matching k characters, instead of resetting the text index, the pattern shifts to pi[k-1], preserving previously matched prefix information. Since the text index never decreases and the pattern index advances or resets via pi, the total comparisons are bounded by O(N + M), with O(M) preprocessing time and space."
+  },
+  {
+    "id": "str-con-06",
+    "topic": "Strings",
+    "difficulty": "Advanced",
+    "type": "concept",
+    "prompt": "Explain how a Trie (Prefix Tree) is structured. What are its operations and when is it preferred over a Hash Table for string storage?",
+    "follow_up": "How can you compress a Trie into a Radix tree (Patricia trie) to optimize memory?",
+    "tags": ["strings", "trie", "prefix-tree", "advanced"],
+    "reference_answer": "A Trie is a tree where each node represents a character or prefix edge and contains child pointers (e.g. array of 26 pointers or map) plus an is_end_of_word boolean flag. Insert, search, and prefix lookups run in O(L) time, where L is word length. Unlike Hash Tables, Tries support ordered prefix queries, autocomplete, and finding longest common prefixes. Memory can be optimized by converting single-child chains into single composite edges, forming a Radix (Patricia) tree."
+  },
+  {
+    "id": "str-cod-01",
+    "topic": "Strings",
+    "difficulty": "Foundations",
+    "type": "coding",
+    "prompt": "A phrase is a palindrome if, after converting all uppercase letters into lowercase letters and removing all non-alphanumeric characters, it reads the same forward and backward. Given a string s, return true if it is a palindrome, or false otherwise.",
+    "follow_up": "Can you verify this in-place with O(1) auxiliary memory without generating a filtered copy of the string?",
+    "tags": ["strings", "two-pointers", "palindrome"],
+    "reference_answer": "Use two pointers, left = 0 and right = len(s) - 1. While left < right, skip non-alphanumeric characters by advancing left and decrementing right. If lowercase s[left] != lowercase s[right], return false. If they match, increment left and decrement right. Returns true if pointers cross. Runs in O(N) time and O(1) auxiliary space.",
+    "examples": [
+      {
+        "input": "s = 'A man, a plan, a canal: Panama'",
+        "output": "true",
+        "explanation": "'amanaplanacanalpanama' is a palindrome."
+      }
+    ],
+    "constraints": ["1 <= s.length <= 2 * 10^5", "s consists only of printable ASCII characters."]
+  },
+  {
+    "id": "str-cod-02",
+    "topic": "Strings",
+    "difficulty": "Intermediate",
+    "type": "coding",
+    "prompt": "Given an array of strings strs, group the anagrams together. You can return the answer in any order.",
+    "follow_up": "What key representation gives the best complexity: sorting each string or using a 26-element character count tuple?",
+    "tags": ["strings", "hash-table", "anagrams"],
+    "reference_answer": "Use a hash map where the key is a character frequency representation (tuple of 26 integers) and the value is a list of strings. For each string in strs, compute its frequency count in O(L) time and append to map[key]. Total time is O(N * L), where N is number of strings and L is maximum string length. Sorting each string yields O(N * L log L). Space is O(N * L).",
+    "examples": [
+      {
+        "input": "strs = ['eat','tea','tan','ate','nat','bat']",
+        "output": "[['bat'],['nat','tan'],['ate','eat','tea']]",
+        "explanation": "Strings with identical character counts are grouped together."
+      }
+    ],
+    "constraints": ["1 <= strs.length <= 10^4", "0 <= strs[i].length <= 100", "strs[i] consists of lowercase English letters."]
+  },
+  {
+    "id": "str-cod-03",
+    "topic": "Strings",
+    "difficulty": "Advanced",
+    "type": "coding",
+    "prompt": "Given two strings s and t of lengths m and n respectively, return the minimum window substring of s such that every character in t (including duplicates) is included in the window. If there is no such substring, return the empty string ''.",
+    "follow_up": "How do you track whether the current window satisfies all character counts in O(1) time without comparing entire maps on each step?",
+    "tags": ["strings", "sliding-window", "minimum-window"],
+    "reference_answer": "Maintain a target frequency map for t, and track have and need counts (number of unique characters with matched frequencies). Advance right pointer: update window frequency. When window[char] == target[char], have++. While have == need, update min_window if current length is smaller, then contract from left: if window[s[left]] == target[s[left]], have--; decrement window[s[left]] and left++. Total time is O(m + n), space is O(k).",
+    "examples": [
+      {
+        "input": "s = 'ADOBECODEBANC', t = 'ABC'",
+        "output": "'BANC'",
+        "explanation": "The minimum window substring 'BANC' includes 'A', 'B', and 'C' from string t."
+      }
+    ],
+    "constraints": ["m == s.length", "n == t.length", "1 <= m, n <= 10^5", "s and t consist of uppercase and lowercase English letters."]
+  },
+
+  {
+    "id": "ll-con-01",
+    "topic": "Linked lists",
+    "difficulty": "Foundations",
+    "type": "concept",
+    "prompt": "What is the purpose of using a dummy (sentinel) node when performing insertion or deletion in a singly linked list?",
+    "follow_up": "Can you give an example where omitting a dummy node requires complex special-case branching?",
+    "tags": ["linked-lists", "dummy-node", "clean-code"],
+    "reference_answer": "A dummy node is an auxiliary node created before the actual head of a linked list (dummy.next = head). It provides a guaranteed non-null predecessor for every node, including the original head. This eliminates special-case branching when inserting at the head, deleting the head node, or merging two lists. When finished, returning dummy.next directly yields the new head."
+  },
+  {
+    "id": "ll-con-02",
+    "topic": "Linked lists",
+    "difficulty": "Foundations",
+    "type": "concept",
+    "prompt": "Explain how the two-pointer technique (fast and slow pointers) finds the middle node of a singly linked list in a single pass.",
+    "follow_up": "How does the stopping condition differ if you want the first middle node versus the second middle node in an even-length list?",
+    "tags": ["linked-lists", "fast-slow-pointers", "middle-node"],
+    "reference_answer": "Initialize two pointers, slow and fast, at head. Advance slow by 1 step (slow = slow.next) and fast by 2 steps (fast = fast.next.next) in each iteration. When fast reaches the end (fast == null or fast.next == null), slow is at the middle. For an even-length list, if the loop condition is `fast && fast.next`, slow ends at the second middle; checking `fast.next && fast.next.next` stops slow at the first middle node."
+  },
+  {
+    "id": "ll-con-03",
+    "topic": "Linked lists",
+    "difficulty": "Intermediate",
+    "type": "concept",
+    "prompt": "Explain Floyd's Cycle-Finding Algorithm (Tortoise and Hare). How does it detect a cycle, and how does it find the exact start node of the cycle?",
+    "follow_up": "What is the mathematical proof that advancing one pointer from the head and one from the meeting point finds the cycle entry?",
+    "tags": ["linked-lists", "cycle-detection", "floyds-algorithm"],
+    "reference_answer": "Slow moves 1 step and fast moves 2 steps. If there is a cycle, fast enters the loop and catches slow within the loop. Let distance from head to cycle entrance be L, and meeting point be at distance k from entrance. Slow traveled L + k, fast traveled L + k + nC (where C is cycle length). Since fast traveled twice as far: 2(L + k) = L + k + nC => L = nC - k. Therefore, resetting one pointer to head and moving both 1 step at a time guarantees they meet at the cycle entrance after L steps."
+  },
+  {
+    "id": "ll-con-04",
+    "topic": "Linked lists",
+    "difficulty": "Intermediate",
+    "type": "concept",
+    "prompt": "How do you reverse a singly linked list in-place in O(N) time and O(1) space iteratively?",
+    "follow_up": "How does the recursive formulation work, and what is the drawback of recursion for very long lists?",
+    "tags": ["linked-lists", "reversal", "pointers"],
+    "reference_answer": "Maintain three pointers: prev = None, curr = head, and next_node. In each step: save next_node = curr.next, reverse the pointer with curr.next = prev, advance prev = curr, and advance curr = next_node. When curr is None, prev is the new head. Time is O(N), space is O(1). The recursive method calls reverse(head.next) and links head.next.next = head, head.next = None; its drawback is O(N) call stack memory which can cause stack overflow on long lists."
+  },
+  {
+    "id": "ll-con-05",
+    "topic": "Linked lists",
+    "difficulty": "Advanced",
+    "type": "concept",
+    "prompt": "Explain how to merge K sorted linked lists. Compare the divide-and-conquer approach with the min-heap (priority queue) approach.",
+    "follow_up": "What is the time complexity and memory overhead of each approach, where K is number of lists and N is total nodes?",
+    "tags": ["linked-lists", "merge-k-lists", "heap", "divide-and-conquer"],
+    "reference_answer": "Min-heap approach: push the head node of each of the K lists into a priority queue of size K. Repeatedly extract the minimum node, append it to the merged list, and push its next node if present. Total time is O(N log K) with O(K) extra space. Divide-and-conquer approach: pair up lists and merge them two at a time using iterative merge, repeating until one list remains. Total time is also O(N log K), but achieved in O(1) auxiliary space (using iterative two-way merges)."
+  },
+  {
+    "id": "ll-con-06",
+    "topic": "Linked lists",
+    "difficulty": "Advanced",
+    "type": "concept",
+    "prompt": "Explain how a Skip List works. How does it achieve O(log N) expected search, insertion, and deletion times using probabilistic balancing?",
+    "follow_up": "Why are Skip Lists sometimes preferred over red-black trees in concurrent systems like Redis or LevelDB?",
+    "tags": ["linked-lists", "skip-list", "probabilistic", "advanced"],
+    "reference_answer": "A Skip List consists of multiple layered linked lists. The bottom layer contains all elements in sorted order. Each higher layer acts as an 'express lane' containing a subset of elements chosen probabilistically (e.g. coin flip with probability p = 1/2). Search starts at top left, moves right while next <= target, and drops down a layer otherwise. Height is O(log N), giving O(log N) expected search, insertion, and deletion. In concurrent systems, Skip Lists avoid complex tree rotations that require wide locks; lock-free mutations are much simpler with compare-and-swap on node pointers."
+  },
+  {
+    "id": "ll-cod-01",
+    "topic": "Linked lists",
+    "difficulty": "Foundations",
+    "type": "coding",
+    "prompt": "Given the head of a singly linked list, reverse the list, and return the reversed list.",
+    "follow_up": "Can you implement both an iterative and a recursive solution and explain their memory footprints?",
+    "tags": ["linked-lists", "reversal"],
+    "reference_answer": "Iterative: initialize prev = None, curr = head. While curr: temp = curr.next, curr.next = prev, prev = curr, curr = temp. Return prev. Time is O(N), auxiliary space is O(1).",
+    "examples": [
+      {
+        "input": "head = [1,2,3,4,5]",
+        "output": "[5,4,3,2,1]",
+        "explanation": "The direction of all links is reversed."
+      }
+    ],
+    "constraints": ["The number of nodes in the list is in the range [0, 5000].", "-5000 <= Node.val <= 5000"]
+  },
+  {
+    "id": "ll-cod-02",
+    "topic": "Linked lists",
+    "difficulty": "Intermediate",
+    "type": "coding",
+    "prompt": "Given the head of a linked list, remove the nth node from the end of the list and return its head.",
+    "follow_up": "Can you do this in one pass with a dummy node and two pointers spaced n nodes apart?",
+    "tags": ["linked-lists", "two-pointers", "dummy-node"],
+    "reference_answer": "Use dummy node pointing to head. Place fast and slow at dummy. Advance fast by n + 1 steps. Then advance both fast and slow by 1 step until fast is null. slow.next is now pointing to the node to be deleted. Set slow.next = slow.next.next. Return dummy.next. Runs in one pass O(N) time and O(1) space.",
+    "examples": [
+      {
+        "input": "head = [1,2,3,4,5], n = 2",
+        "output": "[1,2,3,5]",
+        "explanation": "The 2nd node from the end is 4, which is removed."
+      }
+    ],
+    "constraints": ["The number of nodes in the list is sz.", "1 <= sz <= 30", "0 <= Node.val <= 100", "1 <= n <= sz"]
+  },
+  {
+    "id": "ll-cod-03",
+    "topic": "Linked lists",
+    "difficulty": "Advanced",
+    "type": "coding",
+    "prompt": "Given the head of a linked list, reverse the nodes of the list k at a time, and return the modified list. k is a positive integer and is less than or equal to the length of the linked list. If the number of nodes is not a multiple of k then left-out nodes, in the end, should remain as it is.",
+    "follow_up": "How do you count nodes ahead to avoid reversing the final sublist if its length is less than k?",
+    "tags": ["linked-lists", "k-group-reversal", "advanced"],
+    "reference_answer": "Use a dummy node before head. In a loop, check if there are at least k nodes ahead from current groupPrev. If not, break. Otherwise, reverse the k nodes between groupPrev.next and groupNext. Update groupPrev pointer to the tail of the newly reversed group and repeat. Runs in O(N) time and O(1) auxiliary space.",
+    "examples": [
+      {
+        "input": "head = [1,2,3,4,5], k = 2",
+        "output": "[2,1,4,3,5]",
+        "explanation": "Nodes are reversed in pairs: [1,2] -> [2,1], [3,4] -> [4,3], and 5 remains."
+      }
+    ],
+    "constraints": ["The number of nodes in the list is n.", "1 <= k <= n <= 5000", "0 <= Node.val <= 1000"]
+  },
+
+  {
+    "id": "tree-con-01",
+    "topic": "Trees",
+    "difficulty": "Foundations",
+    "type": "concept",
+    "prompt": "Explain the difference between Preorder, Inorder, and Postorder tree traversals. In what order does Inorder traversal visit a Binary Search Tree (BST)?",
+    "follow_up": "Given only the Inorder and Preorder traversals of a binary tree with unique values, can you uniquely reconstruct the tree? Why?",
+    "tags": ["trees", "traversals", "bst"],
+    "reference_answer": "Traversals define when the root is visited relative to left and right subtrees: Preorder is (Root, Left, Right), Inorder is (Left, Root, Right), and Postorder is (Left, Right, Root). For a Binary Search Tree, Inorder traversal visits elements in strictly non-decreasing sorted order. Inorder + Preorder uniquely reconstructs a binary tree because Preorder identifies the root (first element), and Inorder partitions elements into left and right subtrees around that root."
+  },
+  {
+    "id": "tree-con-02",
+    "topic": "Trees",
+    "difficulty": "Foundations",
+    "type": "concept",
+    "prompt": "What defines a Binary Search Tree (BST) property? What are the best-case, average-case, and worst-case time complexities for search in a BST?",
+    "follow_up": "Under what condition does a BST degenerate into worst-case search performance, and how do self-balancing trees prevent this?",
+    "tags": ["trees", "bst", "complexity"],
+    "reference_answer": "A BST requires that for every node, all values in its left subtree are strictly less than node.val, and all values in its right subtree are strictly greater. Best/average case search is O(log N) when the tree is balanced. In the worst case, inserting pre-sorted data produces a skewed tree (a linked list), degrading search to O(N). Self-balancing BSTs (AVL, Red-Black trees) perform rotations during insertion/deletion to keep height bounded by O(log N)."
+  },
+  {
+    "id": "tree-con-03",
+    "topic": "Trees",
+    "difficulty": "Intermediate",
+    "type": "concept",
+    "prompt": "How do you find the Lowest Common Ancestor (LCA) of two nodes p and q in a regular Binary Tree versus in a Binary Search Tree?",
+    "follow_up": "Why is the BST LCA solvable in O(h) time and O(1) space without postorder tree recursion?",
+    "tags": ["trees", "lca", "bst", "recursion"],
+    "reference_answer": "In a BST, exploit sorted order: starting from root, if both p.val and q.val are less than curr.val, go left; if both are greater, go right. The first node where p and q split (or where curr equals p or q) is the LCA, taking O(h) time and O(1) space. In a regular Binary Tree, use postorder DFS: if root is null, p, or q, return root. Recurse left and right. If both return non-null, root is LCA; otherwise return whichever subtree was non-null. Runs in O(N) time and O(h) recursion stack space."
+  },
+  {
+    "id": "tree-con-04",
+    "topic": "Trees",
+    "difficulty": "Intermediate",
+    "type": "concept",
+    "prompt": "Explain how Breadth-First Search (Level Order Traversal) works on a Binary Tree. How do you track levels separately?",
+    "follow_up": "What is the maximum number of nodes in the queue at any time in a complete binary tree of N nodes?",
+    "tags": ["trees", "bfs", "queue"],
+    "reference_answer": "Level order traversal uses a FIFO queue. Push the root. In a loop while queue is non-empty, record level_size = len(queue). Pop exactly level_size nodes, add their values to the current level list, and push their non-null children into the queue. This separates levels cleanly. In a complete binary tree, the last level contains ceil(N/2) leaves, so the queue holds up to O(N) nodes in the worst case. Time is O(N) and space is O(N)."
+  },
+  {
+    "id": "tree-con-05",
+    "topic": "Trees",
+    "difficulty": "Advanced",
+    "type": "concept",
+    "prompt": "What is Morris Traversal? How does it achieve Inorder traversal in O(N) time using O(1) auxiliary space without recursion or an explicit stack?",
+    "follow_up": "How does Morris Traversal restore the original tree structure after creating temporary predecessor threads?",
+    "tags": ["trees", "morris-traversal", "threaded-tree", "advanced"],
+    "reference_answer": "Morris Traversal uses threaded binary trees. For the current node, if it has no left child, visit curr and advance to curr.right. If it has a left child, find curr's inorder predecessor (rightmost node in left subtree). If predecessor.right is null, set predecessor.right = curr (create temporary thread) and move curr = curr.left. If predecessor.right is curr, break the thread (predecessor.right = null), visit curr, and move curr = curr.right. Every edge is traversed at most 3 times, giving O(N) time and strictly O(1) auxiliary space while restoring the tree."
+  },
+  {
+    "id": "tree-con-06",
+    "topic": "Trees",
+    "difficulty": "Advanced",
+    "type": "concept",
+    "prompt": "Explain the difference between AVL Trees and Red-Black Trees. When would an engineer choose an AVL tree over a Red-Black tree?",
+    "follow_up": "How do their balance factors and rotation counts during insertions and deletions compare?",
+    "tags": ["trees", "avl", "red-black", "self-balancing"],
+    "reference_answer": "AVL trees are strictly balanced (difference in left/right subtree heights is at most 1), guaranteeing height <= 1.44 log2(N). Red-Black trees are more loosely balanced (black height rule guarantees max height <= 2 log2(N)). Because AVL trees are flatter, lookups are faster. However, AVL trees may require O(log N) rotations during deletions, whereas Red-Black trees require at most 2 rotations on insert and 3 on delete. Choose AVL for read-heavy workloads (e.g. static lookups), and Red-Black for insert/delete-heavy systems (e.g. C++ std::map, Java TreeMap)."
+  },
+  {
+    "id": "tree-cod-01",
+    "topic": "Trees",
+    "difficulty": "Foundations",
+    "type": "coding",
+    "prompt": "Given the root of a binary tree, return its maximum depth. A binary tree's maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.",
+    "follow_up": "Can you implement this using both DFS recursion and BFS level-order iteration?",
+    "tags": ["trees", "dfs", "depth"],
+    "reference_answer": "Recursive DFS: if root is None, return 0. Return 1 + max(maxDepth(root.left), maxDepth(root.right)). Time is O(N), space is O(h) where h is tree height. Iterative BFS: initialize queue with root, depth = 0; loop while queue, increment depth and pop all nodes in current level while pushing children.",
+    "examples": [
+      {
+        "input": "root = [3,9,20,null,null,15,7]",
+        "output": "3",
+        "explanation": "Longest root-to-leaf path is 3 -> 20 -> 15 (or 7), depth 3."
+      }
+    ],
+    "constraints": ["The number of nodes in the tree is in the range [0, 10^4].", "-100 <= Node.val <= 100"]
+  },
+  {
+    "id": "tree-cod-02",
+    "topic": "Trees",
+    "difficulty": "Intermediate",
+    "type": "coding",
+    "prompt": "Given the root of a binary tree, determine if it is a valid binary search tree (BST).",
+    "follow_up": "Why is checking root.val > root.left.val and root.val < root.right.val insufficient?",
+    "tags": ["trees", "bst", "validation"],
+    "reference_answer": "Checking only immediate children fails because a node in the right subtree of root.left could be larger than root. The BST property requires an interval [low, high] for every node. Helper validate(node, low, high): if node is None return True; if not (low < node.val < high) return False; return validate(node.left, low, node.val) and validate(node.right, node.val, high). Runs in O(N) time and O(h) space.",
+    "examples": [
+      {
+        "input": "root = [2,1,3]",
+        "output": "true",
+        "explanation": "Left child is 1 < 2 and right child is 3 > 2."
+      },
+      {
+        "input": "root = [5,1,4,null,null,3,6]",
+        "output": "false",
+        "explanation": "Root is 5, but its right child 4 is smaller."
+      }
+    ],
+    "constraints": ["The number of nodes in the tree is in the range [1, 10^4].", "-2^31 <= Node.val <= 2^31 - 1"]
+  },
+  {
+    "id": "tree-cod-03",
+    "topic": "Trees",
+    "difficulty": "Advanced",
+    "type": "coding",
+    "prompt": "A path in a binary tree is a sequence of nodes where each pair of adjacent nodes in the sequence has an edge connecting them. A node can only appear in the sequence at most once. Given the root of a binary tree, return the maximum path sum of any non-empty path.",
+    "follow_up": "How do you distinguish between the maximum path sum passing through a node (which cannot be extended to its parent) and the branch gain returned to the parent caller?",
+    "tags": ["trees", "dfs", "maximum-path-sum", "advanced"],
+    "reference_answer": "Use postorder DFS. Define helper max_gain(node): if node is None return 0. Recursively compute left_gain = max(0, max_gain(node.left)) and right_gain = max(0, max_gain(node.right)). Update global_max = max(global_max, node.val + left_gain + right_gain). Return to parent the best single branch: node.val + max(left_gain, right_gain). Time is O(N), space is O(h).",
+    "examples": [
+      {
+        "input": "root = [-10,9,20,null,null,15,7]",
+        "output": "42",
+        "explanation": "The optimal path is 15 -> 20 -> 7 with sum 15 + 20 + 7 = 42."
+      }
+    ],
+    "constraints": ["The number of nodes in the tree is in the range [1, 3 * 10^4].", "-1000 <= Node.val <= 1000"]
+  },
+
+  {
+    "id": "grp-con-01",
+    "topic": "Graphs",
+    "difficulty": "Foundations",
+    "type": "concept",
+    "prompt": "Compare an Adjacency Matrix and an Adjacency List for graph representation. When would you choose one over the other?",
+    "follow_up": "What are the time complexities for checking if an edge (u, v) exists and for iterating through all neighbors of u in both representations?",
+    "tags": ["graphs", "adjacency-list", "adjacency-matrix", "representations"],
+    "reference_answer": "An Adjacency Matrix uses a V x V 2D array, consuming O(V^2) space. Checking edge (u, v) is O(1), but iterating all neighbors of u takes O(V). An Adjacency List stores a list of neighbors for each vertex, consuming O(V + E) space. Iterating neighbors of u takes O(deg(u)) time, and checking edge (u, v) takes O(deg(u)) or O(1) with hash sets. Choose Adjacency Matrix for dense graphs (E ~ V^2) or constant-time edge checks; choose Adjacency List for sparse graphs (E << V^2) which dominate competitive programming and interview problems."
+  },
+  {
+    "id": "grp-con-02",
+    "topic": "Graphs",
+    "difficulty": "Foundations",
+    "type": "concept",
+    "prompt": "Explain how Breadth-First Search (BFS) finds the shortest path in an unweighted graph. Why does BFS guarantee shortest path whereas DFS does not?",
+    "follow_up": "What data structure does BFS use, and what happens if you forget to mark nodes as visited when pushing them to the queue?",
+    "tags": ["graphs", "bfs", "shortest-path"],
+    "reference_answer": "BFS traverses nodes in non-decreasing order of distance from the source using a FIFO queue. It explores all neighbors at distance d before any node at distance d + 1. The first time the destination node is dequeued or discovered, the path taken is guaranteed to be the shortest in an unweighted graph. DFS dives deep along one path and may find a much longer path before backtracking. Nodes must be marked as visited immediately upon being enqueued, otherwise duplicate insertions cause exponential work or infinite loops in cyclic graphs."
+  },
+  {
+    "id": "grp-con-03",
+    "topic": "Graphs",
+    "difficulty": "Intermediate",
+    "type": "concept",
+    "prompt": "Explain Topological Sorting on a Directed Acyclic Graph (DAG). What is Kahn's algorithm (indegree approach)?",
+    "follow_up": "How does Kahn's algorithm detect if a cycle exists in the directed graph?",
+    "tags": ["graphs", "topological-sort", "kahns-algorithm", "dag"],
+    "reference_answer": "Topological sort orders vertices linearly such that for every directed edge u -> v, u appears before v. Kahn's algorithm computes the indegree (number of incoming edges) of all vertices. Vertices with indegree 0 are pushed to a queue. While queue is non-empty, pop vertex u, append to topological order, and decrement indegree of all neighbors v. If a neighbor's indegree reaches 0, push it to queue. If the number of processed vertices equals V, the sort is valid; if fewer than V were processed, a cycle exists because vertices in the cycle never reach indegree 0. Time is O(V + E)."
+  },
+  {
+    "id": "grp-con-04",
+    "topic": "Graphs",
+    "difficulty": "Intermediate",
+    "type": "concept",
+    "prompt": "How does Disjoint Set Union (Union-Find) work? Explain the Path Compression and Union by Rank optimizations.",
+    "follow_up": "What is the amortized time complexity per operation when both optimizations are applied?",
+    "tags": ["graphs", "union-find", "dsu"],
+    "reference_answer": "Union-Find maintains disjoint sets supporting two operations: find(x), which returns the representative root of x's set, and union(x, y), which merges their sets. Path Compression flattens the tree during find(x) by pointing all nodes directly to the root (parent[x] = find(parent[x])). Union by Rank (or Size) attaches the shallower tree under the deeper tree to prevent skewing. Combined, the amortized time per operation is O(alpha(N)), where alpha is the inverse Ackermann function—effectively O(1) for all practical N."
+  },
+  {
+    "id": "grp-con-05",
+    "topic": "Graphs",
+    "difficulty": "Advanced",
+    "type": "concept",
+    "prompt": "Explain Dijkstra's shortest path algorithm. Why does it require edge weights to be non-negative?",
+    "follow_up": "What algorithm must be used if negative edge weights are present, and how does it detect negative weight cycles?",
+    "tags": ["graphs", "dijkstra", "shortest-path", "advanced"],
+    "reference_answer": "Dijkstra's algorithm finds single-source shortest paths in weighted graphs using a greedy approach with a min-priority queue. It maintains dist[v], starting at infinity except dist[src] = 0. In each step, it extracts vertex u with minimum dist[u] and relaxes outgoing edges (u, v): if dist[u] + weight(u, v) < dist[v], dist[v] is updated and (dist[v], v) is pushed to the priority queue. Runs in O((V + E) log V). It fails on negative edge weights because a greedy decision once finalized can be undercut by a negative edge later. Bellman-Ford (O(V * E)) handles negative weights and detects negative cycles if relaxation succeeds in the V-th pass."
+  },
+  {
+    "id": "grp-con-06",
+    "topic": "Graphs",
+    "difficulty": "Advanced",
+    "type": "concept",
+    "prompt": "Explain Tarjan's algorithm for finding Strongly Connected Components (SCCs) in a directed graph using DFS and low-link values.",
+    "follow_up": "How does Tarjan's differ from Kosaraju's two-pass algorithm in implementation complexity?",
+    "tags": ["graphs", "tarjan", "scc", "dfs", "advanced"],
+    "reference_answer": "A Strongly Connected Component is a maximal subgraph where every vertex is reachable from every other vertex. Tarjan's algorithm computes SCCs in a single DFS pass using discovery time disc[u] and low-link low[u] (earliest visited vertex reachable via u's subtree or back-edges). Visited nodes are maintained on a stack. When exploring neighbor v: if v is unvisited, recurse and low[u] = min(low[u], low[v]); if v is already on the stack, low[u] = min(low[u], disc[v]). If disc[u] == low[u], u is the root of an SCC: pop nodes from the stack until u is popped. Runs in O(V + E) time in 1 pass, whereas Kosaraju's requires 2 passes and a transposed graph."
+  },
+  {
+    "id": "grp-cod-01",
+    "topic": "Graphs",
+    "difficulty": "Foundations",
+    "type": "coding",
+    "prompt": "Given an m x n 2D binary grid grid which represents a map of '1's (land) and '0's (water), return the number of islands. An island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically.",
+    "follow_up": "Can you solve this without using additional visited memory by modifying the grid in-place?",
+    "tags": ["graphs", "dfs", "bfs", "islands"],
+    "reference_answer": "Iterate through every cell (r, c). When a '1' is encountered, increment island count and launch DFS/BFS to sink the island by changing connected '1's to '0' (or marking visited). DFS explores the 4 orthogonal directions (up, down, left, right). Total time is O(m * n) because each cell is visited a constant number of times. Space is O(m * n) for recursion stack or O(1) auxiliary if in-place sinking.",
+    "examples": [
+      {
+        "input": "grid = [['1','1','0','0','0'],['1','1','0','0','0'],['0','0','1','0','0'],['0','0','0','1','1']]",
+        "output": "3",
+        "explanation": "There are three distinct connected components of 1s."
+      }
+    ],
+    "constraints": ["m == grid.length", "n == grid[i].length", "1 <= m, n <= 300", "grid[i][j] is '0' or '1'."]
+  },
+  {
+    "id": "grp-cod-02",
+    "topic": "Graphs",
+    "difficulty": "Intermediate",
+    "type": "coding",
+    "prompt": "There are a total of numCourses courses you have to take, labeled from 0 to numCourses - 1. You are given an array prerequisites where prerequisites[i] = [ai, bi] indicates that you must take course bi first if you want to take course ai. Return true if you can finish all courses, or false otherwise.",
+    "follow_up": "What algorithm detects directed cycles in this graph, and what are the three states in DFS cycle detection?",
+    "tags": ["graphs", "topological-sort", "cycle-detection", "course-schedule"],
+    "reference_answer": "Model courses as directed graph edges bi -> ai. A cycle indicates deadlock. Using Kahn's BFS: compute indegree for all courses, push 0-indegree courses to queue. Pop course, decrement neighbors' indegree, push if 0. Count processed courses. If count == numCourses, return true, else false. Alternatively use 3-state DFS: unvisited (0), visiting/in-stack (1), visited (2). If DFS encounters state 1, cycle exists. Runs in O(V + E) time and O(V + E) space.",
+    "examples": [
+      {
+        "input": "numCourses = 2, prerequisites = [[1,0]]",
+        "output": "true",
+        "explanation": "To take course 1 you should have finished course 0. So it is possible."
+      },
+      {
+        "input": "numCourses = 2, prerequisites = [[1,0],[0,1]]",
+        "output": "false",
+        "explanation": "To take course 1 you need 0, and to take 0 you need 1. Impossible cycle."
+      }
+    ],
+    "constraints": ["1 <= numCourses <= 2000", "0 <= prerequisites.length <= 5000", "prerequisites[i].length == 2", "All pairs are unique."]
+  },
+  {
+    "id": "grp-cod-03",
+    "topic": "Graphs",
+    "difficulty": "Advanced",
+    "type": "coding",
+    "prompt": "You are given a network of n nodes, labeled from 1 to n. You are also given times, a list of travel times as directed edges times[i] = (ui, vi, wi), where ui is the source node, vi is the target node, and wi is the time it takes for a signal to travel from source to target. We will send a signal from a given node k. Return the minimum time it takes for all the n nodes to receive the signal. If it is impossible for all the n nodes to receive the signal, return -1.",
+    "follow_up": "How does Dijkstra's algorithm guarantee the minimum signal arrival time for every reachable node?",
+    "tags": ["graphs", "dijkstra", "shortest-path", "network-delay"],
+    "reference_answer": "Build adjacency list: u -> (v, w). Use Dijkstra's algorithm. Maintain min_heap with (time, node), and dist dictionary. Push (0, k). While heap: pop (d, u). If u in dist, continue. dist[u] = d. For each neighbor (v, w): if v not in dist, push (d + w, v). When heap empty, if len(dist) == n, return max(dist.values()), else return -1. Time complexity is O(E log V), space is O(V + E).",
+    "examples": [
+      {
+        "input": "times = [[2,1,1],[2,3,1],[3,4,1]], n = 4, k = 2",
+        "output": "2",
+        "explanation": "Signal reaches 1 at t=1, 3 at t=1, and 4 at t=2. All nodes reached at t=2."
+      }
+    ],
+    "constraints": ["1 <= k <= n <= 100", "1 <= times.length <= 6000", "times[i].length == 3", "1 <= ui, vi <= n", "ui != vi", "0 <= wi <= 100"]
+  },
+
+  {
+    "id": "dp-con-01",
+    "topic": "Dynamic programming",
+    "difficulty": "Foundations",
+    "type": "concept",
+    "prompt": "What are the two core prerequisites for applying Dynamic Programming to a problem? Contrast Top-Down Memoization with Bottom-Up Tabulation.",
+    "follow_up": "When would you prefer Memoization over Tabulation, and vice versa?",
+    "tags": ["dynamic-programming", "memoization", "tabulation", "foundations"],
+    "reference_answer": "The two prerequisites are: 1) Optimal Substructure (an optimal solution to the problem contains optimal solutions to subproblems), and 2) Overlapping Subproblems (the same subproblems are solved multiple times). Top-Down Memoization uses recursion and caches subproblem results in a hash map or table; it only computes states that are actually needed. Bottom-Up Tabulation solves base cases first and iteratively builds the table; it avoids recursion stack overhead and frequently enables O(1) space optimization by discarding unneeded earlier states."
+  },
+  {
+    "id": "dp-con-02",
+    "topic": "Dynamic programming",
+    "difficulty": "Foundations",
+    "type": "concept",
+    "prompt": "Explain how the Fibonacci sequence or Climbing Stairs problem can be optimized from O(2^N) to O(N) time and O(1) space.",
+    "follow_up": "Can this linear recurrence relation be solved in O(log N) time using matrix exponentiation?",
+    "tags": ["dynamic-programming", "climbing-stairs", "space-optimization"],
+    "reference_answer": "The naive recursion computes f(n) = f(n-1) + f(n-2) with redundant subproblems, resulting in O(2^N) time. By observing that state n depends solely on states n-1 and n-2, we do not need an entire array: keep two variables, prev1 and prev2. In each iteration, current = prev1 + prev2, then shift prev2 = prev1, prev1 = current. This achieves O(N) time and O(1) memory. Using Matrix Exponentiation on [[1, 1], [1, 0]], it can further be computed in O(log N) time via binary exponentiation."
+  },
+  {
+    "id": "dp-con-03",
+    "topic": "Dynamic programming",
+    "difficulty": "Intermediate",
+    "type": "concept",
+    "prompt": "Explain the 0/1 Knapsack problem versus the Unbounded Knapsack problem. What is the state representation and transition formula?",
+    "follow_up": "Why must the 1D space-optimized array be traversed backwards in 0/1 Knapsack, but forwards in Unbounded Knapsack?",
+    "tags": ["dynamic-programming", "knapsack", "space-optimization"],
+    "reference_answer": "In 0/1 Knapsack, each item can be chosen at most once. State dp[i][w] = max value using first i items with weight capacity w: dp[i][w] = max(dp[i-1][w], dp[i-1][w - weight[i]] + value[i]). When space-optimizing to a 1D array dp[w], traversing w backwards from capacity to weight[i] prevents using the current item multiple times in the same step. In Unbounded Knapsack (infinite supply of each item), traversing w forwards allows an item to be selected repeatedly (dp[w] = max(dp[w], dp[w - weight[i]] + value[i]))."
+  },
+  {
+    "id": "dp-con-04",
+    "topic": "Dynamic programming",
+    "difficulty": "Intermediate",
+    "type": "concept",
+    "prompt": "Explain the Longest Common Subsequence (LCS) problem on two strings s1 and s2. What is the DP recurrence and table dimension?",
+    "follow_up": "How does LCS form the foundation for Edit Distance (Levenshtein Distance) and Diff tools?",
+    "tags": ["dynamic-programming", "lcs", "subsequence"],
+    "reference_answer": "Define dp[i][j] as the length of the LCS of prefixes s1[0..i-1] and s2[0..j-1], using an (m+1) x (n+1) table. Base cases: dp[i][0] = dp[0][j] = 0. Recurrence: if s1[i-1] == s2[j-1], dp[i][j] = 1 + dp[i-1][j-1]. If different, dp[i][j] = max(dp[i-1][j], dp[i][j-1]). Time is O(m * n), space is O(m * n) (reducible to O(min(m, n))). In Edit Distance, when characters differ, we take 1 + min(insert, delete, replace). Diff utilities compute LCS to highlight unchanged lines versus additions/deletions."
+  },
+  {
+    "id": "dp-con-05",
+    "topic": "Dynamic programming",
+    "difficulty": "Advanced",
+    "type": "concept",
+    "prompt": "How does the Longest Increasing Subsequence (LIS) problem get optimized from O(N^2) DP to O(N log N) using Patience Sorting / Binary Search?",
+    "follow_up": "What do the elements in the tails array represent during the binary search execution?",
+    "tags": ["dynamic-programming", "lis", "binary-search", "advanced"],
+    "reference_answer": "The standard DP state dp[i] = 1 + max(dp[j] for j < i if arr[j] < arr[i]) takes O(N^2). The O(N log N) patience sorting approach maintains an array tails, where tails[len] stores the smallest tail of all increasing subsequences of length len found so far. For each x in arr: binary search x in tails. If x is larger than all elements, append x (extending LIS). If tails[idx-1] < x <= tails[idx], update tails[idx] = x (creating a smaller, more optimal tail for length idx + 1). Total time is N binary searches = O(N log N), space is O(N)."
+  },
+  {
+    "id": "dp-con-06",
+    "topic": "Dynamic programming",
+    "difficulty": "Advanced",
+    "type": "concept",
+    "prompt": "Explain Bitmask Dynamic Programming. For what types of problems is it applied, and what is its typical complexity?",
+    "follow_up": "How does the Travelling Salesperson Problem (TSP) use bitmask DP to improve on O(N!) brute force?",
+    "tags": ["dynamic-programming", "bitmask", "tsp", "advanced"],
+    "reference_answer": "Bitmask DP uses an integer's binary representation as a compact representation of a subset (1 = element included, 0 = excluded). It applies to NP-hard subset selection problems with small constraints (N <= 20). In TSP, state dp[mask][u] represents the minimum cost to visit all cities in mask ending at city u. Recurrence: dp[mask | (1 << v)][v] = min(dp[mask | (1 << v)][v], dp[mask][u] + cost(u, v)) for unvisited city v. This reduces complexity from O(N!) factorial brute force to O(2^N * N^2) time and O(2^N * N) space."
+  },
+  {
+    "id": "dp-cod-01",
+    "topic": "Dynamic programming",
+    "difficulty": "Foundations",
+    "type": "coding",
+    "prompt": "You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, the only constraint stopping you from robbing each of them is that adjacent houses have security systems connected and it will automatically contact the police if two adjacent houses were broken into on the same night. Given an integer array nums representing the amount of money of each house, return the maximum amount of money you can rob tonight without alerting the police.",
+    "follow_up": "How do you achieve O(N) time and O(1) space complexity?",
+    "tags": ["dynamic-programming", "house-robber", "space-optimization"],
+    "reference_answer": "For each house i, rob either: 1) this house plus max from house i-2, or 2) skip this house and keep max from house i-1. Recurrence: dp[i] = max(dp[i-1], dp[i-2] + nums[i]). Space optimize with rob1 = 0, rob2 = 0. For n in nums: new_rob = max(rob2, rob1 + n); rob1 = rob2; rob2 = new_rob. Return rob2. Time is O(N), space is O(1).",
+    "examples": [
+      {
+        "input": "nums = [1,2,3,1]",
+        "output": "4",
+        "explanation": "Rob house 1 (money = 1) and house 3 (money = 3). Total = 1 + 3 = 4."
+      }
+    ],
+    "constraints": ["1 <= nums.length <= 100", "0 <= nums[i] <= 400"]
+  },
+  {
+    "id": "dp-cod-02",
+    "topic": "Dynamic programming",
+    "difficulty": "Intermediate",
+    "type": "coding",
+    "prompt": "You are given an integer array coins representing coins of different denominations and an integer amount representing a total amount of money. Return the fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any combination of the coins, return -1. You may assume that you have an infinite number of each kind of coin.",
+    "follow_up": "What is the time complexity, and how do you handle initializing the DP array to guard against integer overflow?",
+    "tags": ["dynamic-programming", "coin-change", "unbounded-knapsack"],
+    "reference_answer": "Unbounded knapsack DP. dp[a] = minimum coins for amount a. Initialize dp array of size amount + 1 with amount + 1 (representing infinity), dp[0] = 0. For a from 1 to amount: for c in coins: if a - c >= 0: dp[a] = min(dp[a], 1 + dp[a - c]). If dp[amount] > amount return -1, else return dp[amount]. Time is O(amount * len(coins)), space is O(amount).",
+    "examples": [
+      {
+        "input": "coins = [1,2,5], amount = 11",
+        "output": "3",
+        "explanation": "11 = 5 + 5 + 1 (3 coins)."
+      }
+    ],
+    "constraints": ["1 <= coins.length <= 12", "1 <= coins[i] <= 2^31 - 1", "0 <= amount <= 10^4"]
+  },
+  {
+    "id": "dp-cod-03",
+    "topic": "Dynamic programming",
+    "difficulty": "Advanced",
+    "type": "coding",
+    "prompt": "Given two strings word1 and word2, return the minimum number of operations required to convert word1 to word2. You have the following three operations permitted on a word: Insert a character, Delete a character, Replace a character.",
+    "follow_up": "Can you explain how the 2D table can be compressed to 1D space using O(min(m, n)) memory?",
+    "tags": ["dynamic-programming", "edit-distance", "levenshtein", "advanced"],
+    "reference_answer": "Define dp[i][j] as min operations to convert word1[0..i-1] to word2[0..j-1]. Table size (m+1) x (n+1). Base cases: dp[i][0] = i (i deletions), dp[0][j] = j (j insertions). Recurrence: if word1[i-1] == word2[j-1]: dp[i][j] = dp[i-1][j-1]. Else: dp[i][j] = 1 + min(dp[i-1][j] (delete), dp[i][j-1] (insert), dp[i-1][j-1] (replace)). Time is O(m * n). Space is O(m * n) or O(min(m, n)) with two row arrays.",
+    "examples": [
+      {
+        "input": "word1 = 'horse', word2 = 'ros'",
+        "output": "3",
+        "explanation": "horse -> rorse (replace 'h' with 'r') -> rose (remove 'r') -> ros (remove 'e')."
+      }
+    ],
+    "constraints": ["0 <= word1.length, word2.length <= 500", "word1 and word2 consist of lowercase English letters."]
+  }
+]

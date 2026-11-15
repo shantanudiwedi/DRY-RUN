@@ -1,0 +1,31 @@
+# Environment variables - NEVER COMMIT
+backend/.env
+backend/.env.*
+*.env
+*.env.*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+backend/venv/
+backend/.venv/
+venv/
+.venv/
+env/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node
+node_modules/
+dist/
+build/
+.yarn/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

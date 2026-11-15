@@ -1,0 +1,26 @@
+{
+  "Arrays": {
+    "videos": [],
+    "cheat_sheet": "### Arrays Cheat Sheet\n\n- **Time Complexity**:\n  - Access: $O(1)$ by index.\n  - Search: $O(N)$ unsorted, $O(\\log N)$ sorted with Binary Search.\n  - Insertion/Deletion: $O(N)$ due to element shifting ($O(1)$ amortized at end for dynamic arrays).\n\n- **Core Patterns**:\n  - **Two Pointers**: Opposite ends (sorted arrays, pairs, palindromes) or slow/fast (cycle detection, in-place removal).\n  - **Sliding Window**: Contiguous subarrays with size constraint or optimization (fixed or variable window).\n  - **Prefix Sums**: Fast range sum queries in $O(1)$ after $O(N)$ preprocessing.\n  - **Dutch National Flag**: 3-way partitioning with 3 pointers in one pass.\n\n- **Watchouts & Edge Cases**:\n  - Empty array, single element array, all duplicates, integer overflow when computing `(low + high) // 2` (use `low + (high - low) // 2`)."
+  },
+  "Strings": {
+    "videos": [],
+    "cheat_sheet": "### Strings Cheat Sheet\n\n- **Key Characteristics**:\n  - In many languages (Python, Java), strings are immutable; concatenation in loops creates $O(N^2)$ overhead. Use `StringBuilder` or list joins.\n\n- **Core Patterns**:\n  - **Frequency Array / Hash Map**: Anagrams, character counts (e.g. `int[26]` for lowercase ASCII).\n  - **Two Pointers**: Palindrome verification, string reversal.\n  - **Sliding Window + Hash Table**: Longest substring without repeating characters, minimum window substring.\n  - **Prefix & Trie**: Prefix searches, auto-complete, longest common prefix.\n\n- **Watchouts & Edge Cases**:\n  - Empty string, single character, case-sensitivity, non-alphanumeric characters, whitespace handling."
+  },
+  "Linked lists": {
+    "videos": [],
+    "cheat_sheet": "### Linked Lists Cheat Sheet\n\n- **Time Complexity**:\n  - Access/Search: $O(N)$.\n  - Insert/Delete at known pointer: $O(1)$.\n  - Insert/Delete at head: $O(1)$.\n\n- **Core Patterns**:\n  - **Dummy Head Node**: Eliminates edge cases when modifying the head or returning a new list.\n  - **Fast & Slow Pointers**: Middle of list, cycle detection (Floyd's algorithm), k-th element from the end.\n  - **In-place Reversal**: Maintain `prev`, `curr`, `next_node` pointers without extra memory.\n\n- **Watchouts & Edge Cases**:\n  - Empty list (`head == None`), single node, cycle handling, losing node references before updating `next` pointer."
+  },
+  "Trees": {
+    "videos": [],
+    "cheat_sheet": "### Trees Cheat Sheet\n\n- **Traversals**:\n  - **DFS**: Preorder ($N, L, R$), Inorder ($L, N, R$ - sorted for BST), Postorder ($L, R, N$ - bottom-up calculations).\n  - **BFS / Level-Order**: Queue-based traversal level by level.\n\n- **Properties**:\n  - Balanced BST: Height is $O(\\log N)$. Operations are $O(\\log N)$.\n  - Skewed BST: Degenerates to linked list with $O(N)$ operations.\n  - Number of nodes in full binary tree of height $h$: $2^{h+1} - 1$.\n\n- **Core Patterns**:\n  - **Divide and Conquer (DFS)**: Compute height, diameter, maximum path sum.\n  - **Lowest Common Ancestor (LCA)**: Bottom-up search in binary trees or range check in BSTs.\n\n- **Watchouts & Edge Cases**:\n  - `root == None`, single root node, skewed trees (recursion stack overflow)."
+  },
+  "Graphs": {
+    "videos": [],
+    "cheat_sheet": "### Graphs Cheat Sheet\n\n- **Representations**:\n  - Adjacency List: $O(V + E)$ space, ideal for sparse graphs.\n  - Adjacency Matrix: $O(V^2)$ space, quick edge lookups $O(1)$.\n\n- **Core Algorithms**:\n  - **BFS**: Shortest path in unweighted graphs using a `Queue` and `visited` set.\n  - **DFS**: Connectivity, path finding, cycle detection with recursion or `Stack`.\n  - **Topological Sort**: Directed Acyclic Graphs (DAG), Kahn's algorithm (indegree) or DFS postorder reverse.\n  - **Dijkstra's**: Shortest path in weighted graph with non-negative weights using `PriorityQueue` ($O((V + E) \\log V)$).\n  - **Disjoint Set Union (Union-Find)**: Connected components, Kruskal's MST.\n\n- **Watchouts & Edge Cases**:\n  - Disconnected graphs (must loop over all vertices to start BFS/DFS), self-loops, directed vs undirected cycles."
+  },
+  "Dynamic programming": {
+    "videos": [],
+    "cheat_sheet": "### Dynamic Programming Cheat Sheet\n\n- **Core Principles**:\n  - Optimal Substructure: Solution to problem consists of optimal solutions to subproblems.\n  - Overlapping Subproblems: Same subproblems solved repeatedly.\n\n- **Approaches**:\n  - Top-down (Memoization): Recursive + caching table.\n  - Bottom-up (Tabulation): Iterative table filling from base cases.\n  - Space Optimization: If $dp[i]$ only depends on $dp[i-1]$ or $dp[i-2]$, reduce space to $O(1)$.\n\n- **Standard Patterns**:\n  - 1D DP: Climbing stairs, Fibonacci, House Robber, Coin Change.\n  - 2D Grid / Matrix: Unique paths, minimum path sum.\n  - Subsequences: Longest Common Subsequence (LCS), Longest Increasing Subsequence (LIS), Edit Distance.\n  - Knapsack: 0/1 Knapsack, Unbounded Knapsack.\n\n- **Watchouts & Edge Cases**:\n  - Base cases ($0, 1$, negative indices), off-by-one errors in table dimensions."
+  }
+}
